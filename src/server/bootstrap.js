@@ -10,13 +10,13 @@ var template =
       <meta charset="utf-8">\
       <meta name="viewport" content="width=device-width, initial-scale=1">\
       <title>TfL London Underground Arrivals</title>\
-      <link rel="preload" href="/font.css" as="style">\
-      <link rel="stylesheet" href="/styles.css">\
+      <link rel="preload" href="/public/font.css" as="style">\
+      <link rel="stylesheet" href="/public/styles.css">\
     </head>\
     <body>\
       <div id="app">%s</div>\
       <script type="application/json" id="initialData">%s</script>\
-      <script src="/build/app.js"></script>\
+      <script src="/public/bundle.js"></script>\
     </body>\
   </html>\n';
 
