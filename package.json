@@ -1,0 +1,12 @@
+{
+  "name": "react-through-time",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Matt Hinchliffe",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i-like-robots/react-through-time.git"
+  },
+  "homepage": "https://github.com/i-like-robots/react-through-time"
+}

@@ -1,0 +1,390 @@
+@import "font.css";
+
+/**
+ * Normalize elements
+ */
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+legend,
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+button,
+select {
+  font: inherit;
+  text-transform: none;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+:focus {
+  outline: 3px solid #2070b0;
+}
+
+/**
+ * Global typography
+ */
+html {
+  font-size: 14px;
+}
+
+body {
+  font: normal 1rem/1.5 Karla, Helvetica, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color: #333;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-weight: normal;
+  font-size: 2.5rem;
+  line-height: 4rem;
+}
+
+h2 {
+  margin: 0 0 0.5rem;
+  font-weight: normal;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+@media screen and (min-width: 640px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/**
+ * Global form styles
+ */
+select,
+button {
+  box-sizing: border-box;
+  height: 3rem;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid #999;
+  border-radius: 0;
+  /* This is equivalent to "line-height: normal" */
+  line-height: 22px;
+  vertical-align: middle;
+  color: #555;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-indent: 0.01px;
+  text-overflow: " ";
+
+  background: #fff
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OTEuOTk2IDQ5MS45OTYiPjxwYXRoIGZpbGw9IiMzMzMiIGQ9Ik00ODQuMTMyIDEyNC45ODZsLTE2LjExNi0xNi4yMjhjLTUuMDcyLTUuMDY4LTExLjgyLTcuODYtMTkuMDMyLTcuODYtNy4yMDggMC0xMy45NjQgMi43OTItMTkuMDM2IDcuODZsLTE4My44NCAxODMuODQ4TDYyLjA1NiAxMDguNTU0Yy01LjA2NC01LjA2OC0xMS44Mi03Ljg1Ni0xOS4wMjgtNy44NTZzLTEzLjk2OCAyLjc4OC0xOS4wMzYgNy44NTZsLTE2LjEyIDE2LjEyOGMtMTAuNDk2IDEwLjQ4OC0xMC40OTYgMjcuNTcyIDAgMzguMDZsMjE5LjEzNiAyMTkuOTI0YzUuMDY0IDUuMDY0IDExLjgxMiA4LjYzMiAxOS4wODQgOC42MzJoLjA4NGM3LjIxMiAwIDEzLjk2LTMuNTcyIDE5LjAyNC04LjYzMmwyMTguOTMyLTIxOS4zMjhjNS4wNzItNS4wNjQgNy44NTYtMTIuMDE2IDcuODY0LTE5LjIyNCAwLTcuMjEyLTIuNzkyLTE0LjA2OC03Ljg2NC0xOS4xMjh6Ii8+PC9zdmc+Cg==")
+    right center no-repeat;
+  background-size: 1rem;
+  background-origin: content-box;
+  box-shadow: inset 0 2px rgba(0, 0, 0, 0.15);
+}
+
+select:focus {
+  color: #333;
+}
+
+button {
+  background-color: #e5e9e8;
+  text-shadow: 0 1px #fff;
+  box-shadow: inset 0 2px #fff;
+}
+
+button:hover,
+button:focus {
+  background-color: #eff1f1;
+}
+
+button:active {
+  border-color: #999;
+  background-color: #d2d6d6;
+  box-shadow: inset 0 2px rgba(0, 0, 0, 0.15);
+}
+
+/**
+ * Utilities
+ */
+.u-visuallyHidden {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/**
+ * App layout
+ */
+.Layout {
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+}
+
+@media screen and (min-width: 1000px) {
+  .Layout {
+    display: grid;
+    grid-template-columns: 360px auto;
+    grid-template-areas:
+      "sidebar content"
+      "footer footer";
+  }
+
+  .Layout-predictions {
+    grid-area: content;
+  }
+
+  .Layout-network {
+    grid-area: sidebar;
+  }
+
+  .Layout-footer {
+    grid-area: footer;
+    text-align: center;
+  }
+}
+
+/**
+ * Footer
+ */
+.Footer {
+  text-align: center;
+  border-top: 1px solid #9daca9;
+}
+
+.Footer p {
+  margin: 1rem 0 0;
+}
+
+/**
+ * Network panel
+ */
+.Network {
+  position: relative;
+  box-sizing: border-box;
+  /* padding: 20px; */
+  background: #fff;
+}
+
+.Network-line {
+  position: relative;
+  display: flex;
+  margin-bottom: 2px;
+  padding: 2rem 0 0.25rem 12px;
+  border-left: 8px solid;
+}
+
+.Network-line--bakerloo {
+  border-left-color: #894e24;
+}
+
+.Network-line--central {
+  border-left-color: #dc241f;
+}
+
+.Network-line--circle {
+  border-left-color: #ffce00;
+}
+
+.Network-line--district {
+  border-left-color: #007229;
+}
+
+.Network-line--hammersmith-city {
+  border-left-color: #d799af;
+}
+
+.Network-line--jubilee {
+  border-left-color: #6a7278;
+}
+
+.Network-line--metropolitan {
+  border-left-color: #751056;
+}
+
+.Network-line--northern {
+  border-left-color: #111;
+}
+
+.Network-line--piccadilly {
+  border-left-color: #0019a8;
+}
+
+.Network-line--victoria {
+  border-left-color: #00a0e2;
+}
+
+.Network-line--waterloo-city {
+  border-left-color: #76d0bd;
+}
+
+.Network-line legend {
+  position: absolute;
+  top: 0;
+}
+
+.Network-line select {
+  width: 80%;
+  border-right: 0;
+}
+
+.Network-line button {
+  flex: 1;
+}
+
+@media screen and (min-width: 1000px) {
+  .Network {
+    min-height: 100%;
+    padding-right: 20px;
+    border-right: 1px solid #9daca9;
+  }
+
+  .Network-line {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/**
+ * Departure board
+ */
+.Departures {
+}
+
+.Departures-heading {
+  overflow: hidden;
+  border-bottom: 0.25rem solid #e0e0e0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #2070b0;
+  background: #fff;
+}
+
+.Departures-noData {
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+/**
+ * Trains table
+ */
+.Trains {
+  width: 100%;
+  margin: 0 0 2rem;
+  border: 1px solid #151717;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.Trains th,
+.Trains td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.Trains th {
+  border-bottom: 1px solid #151717;
+  color: #fcfcbd;
+  background: #2d3232;
+  box-shadow: inset 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.Trains td {
+  border-bottom: 1px solid #2d3232;
+  background: #393f3f;
+  box-shadow: inset 0 2px rgba(255, 255, 255, 0.15);
+}
+
+.Trains th:last-child,
+.Trains td:last-child {
+  display: none;
+}
+
+@media screen and (min-width: 1000px) {
+  .Trains th:last-child,
+  .Trains td:last-child {
+    display: revert;
+  }
+}
+
+/**
+ * Refresh timer
+ */
+.Timer {
+  display: block;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.Timer span {
+  display: block;
+  font-size: 0.875rem;
+}
+
+.Timer progress {
+  width: 10rem;
+  height: 0.75rem;
+  background: #e5e9e8;
+  box-shadow: inset 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.Timer progress::-webkit-progress-bar {
+  background: #e5e9e8;
+}
+.Timer progress::-webkit-progress-value {
+  background: #2070b0;
+}
+
+.Timer progress::-moz-progress-bar {
+  background: #2070b0;
+}
+
+/**
+ * Notification panel
+ */
+.Notice {
+  margin: 1.25rem;
+  padding: 1rem 20px;
+  border: 1px solid;
+  box-shadow: inset 0 2px #fff;
+}
+.Notice p {
+  margin-bottom: 0;
+}
+
+.Notice--welcome {
+  background: #f2f8fd;
+  border-color: #2b8bd8;
+}
+
+.Notice--loading {
+  background: #fafbfb;
+  border-color: #aebdbd;
+}
+
+.Notice--error {
+  background: #fdf2f2;
+  border-color: #d82b34;
+}
