@@ -1,4 +1,4 @@
-// require("node-jsx").install({ extension: ".jsx" });
+require("node-jsx").install({ extension: ".jsx" });
 
 var app = require("./app");
 

@@ -1,5 +1,6 @@
 var express = require("express");
 var api = require("./api");
+var bootstrap = require("./bootstrap");
 
 var app = express();
 
@@ -15,19 +16,20 @@ app.get("/api/:line/:station", function (req, res) {
 });
 
 app.get("/", function (req, res) {
+  res.setHeader("Cache-Control", "max-age=30, must-revalidate");
+
   if (req.query.line && req.query.station) {
     api.getData(req.query.line, req.query.station, function (err, data) {
       if (err) {
         console.error(err);
         res.status(err.code || 500).send("Internal error");
       } else {
-        // var html = bootstrap(data);
-        var html = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+        var html = bootstrap(data);
         res.send(html);
       }
     });
   } else {
-    var html = "<pre>Hello, World</pre>";
+    var html = bootstrap(null);
     res.send(html);
   }
 });
