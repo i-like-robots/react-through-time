@@ -8,5 +8,16 @@
     "type": "git",
     "url": "git+https://github.com/i-like-robots/react-through-time.git"
   },
-  "homepage": "https://github.com/i-like-robots/react-through-time"
+  "homepage": "https://github.com/i-like-robots/react-through-time",
+  "engines": {
+    "node": "0.12.x"
+  },
+  "scripts": {
+    "start": "node src/server/start.js"
+  },
+  "dependencies": {
+    "express": "~4.5.0",
+    "react": "~0.12.2",
+    "node-jsx": "~0.12.2"
+  }
 }
