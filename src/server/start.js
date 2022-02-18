@@ -1,4 +1,17 @@
-require("node-jsx").install({ extension: ".jsx" });
+require("babel-register")({
+  presets: [
+    [
+      "env",
+      {
+        targets: {
+          node: 6.7,
+        },
+      },
+    ],
+    "react",
+  ],
+  extensions: [".jsx"],
+});
 
 var app = require("./app");
 

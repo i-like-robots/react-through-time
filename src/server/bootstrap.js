@@ -1,5 +1,6 @@
 var util = require("util");
 var React = require("react");
+var ReactDOM = require("react-dom/server");
 var networkData = require("../data.json");
 var TubeTracker = require("../components/TubeTracker.jsx");
 
@@ -26,7 +27,7 @@ function bootstrap(initialData) {
     initialData: initialData,
   };
 
-  var app = React.renderToString(React.createElement(TubeTracker, appData));
+  var app = ReactDOM.renderToString(React.createElement(TubeTracker, appData));
 
   return util.format(template, app, JSON.stringify(appData));
 }

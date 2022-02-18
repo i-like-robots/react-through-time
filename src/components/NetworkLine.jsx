@@ -7,13 +7,13 @@ var NetworkLine = React.createClass({
     // Dispatch an event for other components to capture
     var updateEvent = new CustomEvent("station-select", {
       detail: {
-        station: this.refs.station.getDOMNode().value,
+        station: this.refs.station.value,
         line: this.props.line,
       },
       bubbles: true,
     });
 
-    this.refs.form.getDOMNode().dispatchEvent(updateEvent);
+    this.refs.form.dispatchEvent(updateEvent);
   },
 
   render: function () {
