@@ -16,8 +16,6 @@ app.get("/api/:line/:station", function (req, res) {
 });
 
 app.get("/", function (req, res) {
-  res.setHeader("Cache-Control", "max-age=30, must-revalidate");
-
   if (req.query.line && req.query.station) {
     api.getData(req.query.line, req.query.station, function (err, data) {
       if (err) {
