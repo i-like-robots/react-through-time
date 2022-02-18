@@ -1,104 +1,92 @@
-var React = require("react");
-var Notice = require("./Notice.jsx");
-var Departures = require("./Departures.jsx");
+import React from "react";
+import Notice from "./Notice.jsx";
+import Departures from "./Departures.jsx";
 
-function ajaxRequest(url, callback) {
-  var request = new XMLHttpRequest();
-
-  request.open("GET", url);
-
-  request.onload = function () {
-    if (this.status === 200) {
-      callback(null, this.responseText);
+function fetchRequest(url) {
+  return fetch(url).then((res) => {
+    if (res.ok) {
+      return res.json();
     } else {
-      callback(new Error(this.status), null);
+      throw new Error(
+        `Unexpected response code: ${res.status}, ${res.statusText}`
+      );
     }
-  };
-
-  request.onerror = function () {
-    callback(new Error(this.status), null);
-  };
-
-  request.send();
+  });
 }
 
-var Predictions = React.createClass({
-  getInitialState: function () {
-    return {
-      status: this.props.initialData ? "success" : "welcome",
-      predictionData: this.props.initialData,
-    };
-  },
+class Predictions extends React.Component {
+  constructor(props) {
+    super(props);
 
-  fetchData: function (line, station) {
+    this.state = {
+      status: props.initialData ? "success" : "welcome",
+      predictionData: props.initialData,
+    };
+  }
+
+  fetchData(line, station) {
     this.setState({ status: "loading" });
 
-    var url = "/api/" + line + "/" + station;
+    const url = `/api/${line}/${station}`;
 
-    function callback(err, data) {
-      if (err) {
-        this.onFetchError(err);
-      } else {
-        this.onFetchSuccess(data);
-      }
-    }
+    fetchRequest(url)
+      .then((data) => this.onFetchSuccess(data))
+      .catch((err) => this.onFetchError(err));
+  }
 
-    ajaxRequest(url, callback.bind(this));
-  },
-
-  onFetchError: function (err) {
+  onFetchError(err) {
     this.setState({
       status: "error",
       predictionData: undefined,
     });
 
     console.error(err);
-  },
+  }
 
-  onFetchSuccess: function (data) {
+  onFetchSuccess(data) {
     this.setState({
       status: "success",
-      predictionData: JSON.parse(data),
+      predictionData: data,
     });
-  },
+  }
 
-  resetPoll: function (line, station) {
+  resetPoll(line, station) {
     clearInterval(this.poll);
 
     this.poll = setInterval(
       this.fetchData.bind(this, line, station),
       1000 * 30
     );
-  },
+  }
 
-  componentDidMount: function () {
+  componentDidMount() {
     if (this.props.line && this.props.station) {
       this.resetPoll(this.props.line, this.props.station);
     }
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     clearInterval(this.poll);
-  },
+  }
 
-  componentWillReceiveProps: function (newProps) {
+  componentWillReceiveProps(newProps) {
     this.fetchData(newProps.line, newProps.station);
     this.resetPoll(newProps.line, newProps.station);
-  },
+  }
 
-  shouldComponentUpdate: function (newProps, newState) {
+  shouldComponentUpdate(newProps, newState) {
     // Only update when line/station changes or new predictions load otherwise the
     // loading notice will be displayed when refreshing current predictions.
     return newState.status !== "loading" || this.props !== newProps;
-  },
+  }
 
-  render: function () {
+  render() {
     if (this.state.status === "success") {
       return <Departures predictionData={this.state.predictionData} />;
     }
 
     return <Notice type={this.state.status} />;
-  },
-});
+  }
+}
 
-module.exports = Predictions;
+export default Predictions;

@@ -1,33 +1,28 @@
-var React = require("react");
-var Trains = require("./Trains.jsx");
+import React from "react";
+import Trains from "./Trains.jsx";
 
-var Departures = React.createClass({
-  render: function () {
-    var station = this.props.predictionData.station;
-    var platforms = this.props.predictionData.platforms;
+function Departures(props) {
+  const { station, platforms } = props.predictionData;
 
-    var trains = Object.keys(platforms).map(function (platform) {
-      return (
-        <div className="Platform" key={platform}>
-          <h2 className="Platform-heading">{platform}</h2>
-          <Trains trains={platforms[platform]} />
-        </div>
-      );
-    });
+  const trains = Object.keys(platforms).map((platform) => (
+    <div className="Platform" key={platform}>
+      <h2 className="Platform-heading">{platform}</h2>
+      <Trains trains={platforms[platform]} />
+    </div>
+  ));
 
-    return (
-      <div className="Departures">
-        <h1 className="Departures-heading">
-          {station.stationName + " Station, " + station.lineName + " Line"}
-        </h1>
-        {trains.length ? (
-          trains
-        ) : (
-          <p class="Departures-noData">No train arrivals due.</p>
-        )}
-      </div>
-    );
-  },
-});
+  return (
+    <div className="Departures">
+      <h1 className="Departures-heading">
+        {`${station.stationName} Station, ${station.lineName} Line`}
+      </h1>
+      {trains.length ? (
+        trains
+      ) : (
+        <p class="Departures-noData">No train arrivals due.</p>
+      )}
+    </div>
+  );
+}
 
-module.exports = Departures;
+export default Departures;

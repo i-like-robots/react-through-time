@@ -2,7 +2,7 @@ const util = require("util");
 const React = require("react");
 const ReactDOM = require("react-dom/server");
 const networkData = require("../data.json");
-const TubeTracker = require("../components/TubeTracker.jsx");
+const TubeTracker = require("../components/TubeTracker.jsx").default;
 
 const template = `<!DOCTYPE html>
   <html lang="en-GB">
