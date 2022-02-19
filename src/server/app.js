@@ -1,8 +1,8 @@
-const express = require("express");
-const api = require("./api");
-const bootstrap = require("./bootstrap");
+import express from "express";
+import api from "./api.js";
+import bootstrap from "./bootstrap.js";
 
-const app = express();
+export const app = express();
 
 app.get("/api/:line/:station", (req, res) => {
   api
@@ -35,5 +35,3 @@ app.get("/", (req, res) => {
 });
 
 app.use("/public", express.static("./public"));
-
-module.exports = app;

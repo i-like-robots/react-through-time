@@ -1,8 +1,8 @@
-const util = require("util");
-const React = require("react");
-const ReactDOM = require("react-dom/server");
-const networkData = require("../data.json");
-const TubeTracker = require("../components/TubeTracker.jsx").default;
+import util from "util";
+import React from "react";
+import ReactDOM from "react-dom/server.js";
+import networkData from "../data.json";
+import TubeTracker from "../components/TubeTracker.jsx";
 
 const template = `<!DOCTYPE html>
   <html lang="en-GB">
@@ -21,7 +21,7 @@ const template = `<!DOCTYPE html>
   </html>
   `;
 
-function bootstrap(initialData) {
+export default function bootstrap(initialData) {
   const appData = {
     networkData,
     initialData,
@@ -33,5 +33,3 @@ function bootstrap(initialData) {
 
   return util.format(template, app, JSON.stringify(appData));
 }
-
-module.exports = bootstrap;

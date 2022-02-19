@@ -1,7 +1,7 @@
-const querystring = require("querystring");
-const networkUtils = require("./networkUtils");
-const httpRequest = require("./httpRequest");
-const networkData = require("../data");
+import querystring from "querystring";
+import networkUtils from "./networkUtils.js";
+import httpRequest from "./httpRequest.js";
+import networkData from "../data.json";
 
 function formatData(line, station, data) {
   const platforms = {};
@@ -26,7 +26,7 @@ function formatData(line, station, data) {
   };
 }
 
-function getData(line, station) {
+export function getData(line, station) {
   if (!networkUtils.isStationOnLine(line, station, networkData)) {
     const error = new Error();
 
@@ -62,7 +62,3 @@ function getData(line, station) {
     return formattedData;
   });
 }
-
-module.exports = {
-  getData,
-};
