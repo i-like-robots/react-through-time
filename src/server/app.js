@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   let fetchData;
 
   if (req.query.line && req.query.station) {
-    fetchData = api.getData(req.params.line, req.params.station);
+    fetchData = api.getData(req.query.line, req.query.station);
   }
 
   Promise.resolve(fetchData)
