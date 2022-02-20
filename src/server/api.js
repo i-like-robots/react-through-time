@@ -1,4 +1,4 @@
-import querystring from "querystring";
+import { URLSearchParams } from "url";
 import networkUtils from "./networkUtils.js";
 import httpRequest from "./httpRequest.js";
 import networkData from "../data.json";
@@ -26,14 +26,14 @@ function formatData(line, station, data) {
   };
 }
 
-export function getData(line, station) {
+export async function getData(line, station) {
   if (!networkUtils.isStationOnLine(line, station, networkData)) {
     const error = new Error();
 
     error.message = "Invalid station and/or line combination";
     error.code = 400;
 
-    return Promise.reject(error);
+    throw error;
   }
 
   const combinedLines = networkUtils.getCombinedLines(
@@ -44,21 +44,20 @@ export function getData(line, station) {
 
   const path = `/Line/${combinedLines}/Arrivals`;
 
-  const query = {
-    app_id: process.env.APP_ID,
-    app_key: process.env.APP_KEY,
+  const query = new URLSearchParams({
+    // app_id: process.env.APP_ID,
+    // app_key: process.env.APP_KEY,
     stopPointId: station,
-  };
+  });
 
   const opts = {
-    path: `${path}?${querystring.stringify(query)}`,
+    path: `${path}?${query.toString()}`,
     hostname: "api.tfl.gov.uk",
   };
 
-  return httpRequest(opts).then((data) => {
-    const json = JSON.parse(data);
-    const formattedData = formatData(line, station, json);
+  const data = await httpRequest(opts);
+  const json = JSON.parse(data);
+  const formattedData = formatData(line, station, json);
 
-    return formattedData;
-  });
+  return formattedData;
 }

@@ -22,7 +22,7 @@ export function getCombinedLines(line, station, data) {
       return lineGroup.includes(line);
     });
 
-    lineGroups.forEach((lineGroup) => lines.push(...lineGroup));
+    lines.push(...lineGroups.flat());
   }
 
   return Array.from(new Set(lines)).join();
