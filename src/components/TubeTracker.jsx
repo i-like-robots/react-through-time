@@ -10,8 +10,8 @@ class TubeTracker extends React.Component {
     const { initialData } = this.props;
 
     this.state = {
-      line: initialData ? initialData.request.lineCode : null,
-      station: initialData ? initialData.request.stationCode : null,
+      line: initialData ? initialData.request.line : null,
+      station: initialData ? initialData.request.station : null,
     };
 
     this.onStationSelect = this.onStationSelect.bind(this);
