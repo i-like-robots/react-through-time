@@ -8,8 +8,8 @@ var TubeTracker = React.createClass({
     var initialData = this.props.initialData;
 
     return {
-      line: initialData ? initialData.request.lineCode : null,
-      station: initialData ? initialData.request.stationCode : null,
+      line: initialData ? initialData.request.line : null,
+      station: initialData ? initialData.request.station : null,
     };
   },
 
