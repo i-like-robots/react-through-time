@@ -24,16 +24,6 @@ class Predictions extends React.Component {
     };
   }
 
-  fetchData(line, station) {
-    this.setState({ status: "loading" });
-
-    const url = `/api/${line}/${station}`;
-
-    fetchRequest(url)
-      .then((data) => this.onFetchSuccess(data))
-      .catch((err) => this.onFetchError(err));
-  }
-
   onFetchError(err) {
     this.setState({
       status: "error",
@@ -48,6 +38,16 @@ class Predictions extends React.Component {
       status: "success",
       predictionData: data,
     });
+  }
+
+  fetchData(line, station) {
+    this.setState({ status: "loading" });
+
+    const url = `/api/${line}/${station}`;
+
+    fetchRequest(url)
+      .then((data) => this.onFetchSuccess(data))
+      .catch((err) => this.onFetchError(err));
   }
 
   resetPoll(line, station) {
