@@ -30,22 +30,6 @@ var Predictions = React.createClass({
     };
   },
 
-  fetchData: function (line, station) {
-    this.setState({ status: "loading" });
-
-    var url = "/api/" + line + "/" + station;
-
-    function callback(err, data) {
-      if (err) {
-        this.onFetchError(err);
-      } else {
-        this.onFetchSuccess(data);
-      }
-    }
-
-    ajaxRequest(url, callback.bind(this));
-  },
-
   onFetchError: function (err) {
     this.setState({
       status: "error",
@@ -60,6 +44,22 @@ var Predictions = React.createClass({
       status: "success",
       predictionData: JSON.parse(data),
     });
+  },
+
+  fetchData: function (line, station) {
+    this.setState({ status: "loading" });
+
+    var url = "/api/" + line + "/" + station;
+
+    function callback(err, data) {
+      if (err) {
+        this.onFetchError(err);
+      } else {
+        this.onFetchSuccess(data);
+      }
+    }
+
+    ajaxRequest(url, callback.bind(this));
   },
 
   resetPoll: function (line, station) {
