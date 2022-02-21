@@ -45,8 +45,8 @@ function Predictions(props) {
       // Only update when line/station changes or new predictions load otherwise the
       // loading notice will be displayed when refreshing current predictions.
       const showLoading =
-        props.line !== state.predictionData?.request.line ||
-        props.station !== state.predictionData?.request.station;
+        line !== state.predictionData?.request.line ||
+        station !== state.predictionData?.request.station;
 
       setState({
         ...state,
@@ -62,13 +62,7 @@ function Predictions(props) {
         onFetchError(err);
       }
     },
-    [
-      onFetchSuccess,
-      onFetchError,
-      props.line,
-      props.station,
-      state.predictionData,
-    ]
+    [onFetchSuccess, onFetchError, state.predictionData]
   );
 
   const resetPoll = useCallback(
