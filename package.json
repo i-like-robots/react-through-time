@@ -10,7 +10,7 @@
   },
   "homepage": "https://github.com/i-like-robots/react-through-time",
   "engines": {
-    "node": "0.12.x"
+    "node": "0.10.x"
   },
   "scripts": {
     "start": "node src/server/start.js",
