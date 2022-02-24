@@ -7,6 +7,8 @@ export const app = express();
 app.get("/api/:line/:station", async (req, res) => {
   try {
     const data = await api.getData(req.params.line, req.params.station);
+
+    res.set("Cache-Control", "max-age=30, must-revalidate");
     res.json(data);
   } catch (err) {
     console.error(err);
