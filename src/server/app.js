@@ -8,6 +8,7 @@ app.get("/api/:line/:station", (req, res) => {
   api
     .getData(req.params.line, req.params.station)
     .then((data) => {
+      res.set("Cache-Control", "max-age=30, must-revalidate");
       return res.json(data);
     })
     .catch((err) => {
