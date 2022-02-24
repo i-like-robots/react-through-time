@@ -9,14 +9,19 @@ function ajaxRequest(url, callback) {
 
   request.onload = function () {
     if (this.status === 200) {
-      callback(null, this.responseText);
+      try {
+        var json = JSON.parse(this.responseText);
+        callback(null, json);
+      } catch (err) {
+        callback(err, null);
+      }
     } else {
       callback(new Error(this.status), null);
     }
   };
 
-  request.onerror = function () {
-    callback(new Error(this.status), null);
+  request.onerror = function (err) {
+    callback(err, null);
   };
 
   request.send();
@@ -42,7 +47,7 @@ var Predictions = React.createClass({
   onFetchSuccess: function (data) {
     this.setState({
       status: "success",
-      predictionData: JSON.parse(data),
+      predictionData: data,
     });
   },
 
