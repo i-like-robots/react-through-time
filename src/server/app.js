@@ -5,6 +5,8 @@ var bootstrap = require("./bootstrap");
 var app = express();
 
 app.get("/api/:line/:station", function (req, res) {
+  res.set("Cache-Control", "max-age=30, must-revalidate");
+
   api.getData(req.params.line, req.params.station, function (err, data) {
     if (err) {
       console.error(err);
