@@ -12,7 +12,7 @@ app.get("/api/:line/:station", async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error(err);
-    res.status(err.code || 500).send("Internal error");
+    res.status(err.code ?? 500).send("Internal error");
   }
 });
 
@@ -28,7 +28,7 @@ app.get("/", async (req, res) => {
     res.send(html);
   } catch (err) {
     console.error(err);
-    res.status(err.code || 500).send("Internal error");
+    res.status(err.code ?? 500).send("Internal error");
   }
 });
 
