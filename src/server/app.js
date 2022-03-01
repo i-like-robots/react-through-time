@@ -13,7 +13,7 @@ app.get("/api/:line/:station", (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(err.code || 500).send("Internal error");
+      res.status(err.code != null ? err.code : 50).send("Internal error");
     });
 });
 
@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(err.code || 500).send("Internal error");
+      res.status(err.code != null ? err.code : 50).send("Internal error");
     });
 });
 
