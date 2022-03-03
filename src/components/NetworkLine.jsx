@@ -2,24 +2,22 @@ import React, { useCallback, useRef } from "react";
 
 function NetworkLine({ line, networkData }) {
   const formRef = useRef();
-  const stationRef = useRef();
 
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
 
+      const formData = new FormData(formRef.current);
+
       // Dispatch an event for other components to capture
       const updateEvent = new CustomEvent("station-select", {
-        detail: {
-          station: stationRef.current?.value,
-          line,
-        },
+        detail: Object.fromEntries(formData),
         bubbles: true,
       });
 
       formRef.current?.dispatchEvent(updateEvent);
     },
-    [line, formRef, stationRef]
+    [formRef]
   );
 
   const stationsOnLine = networkData.stationsOnLines[line];
@@ -35,9 +33,7 @@ function NetworkLine({ line, networkData }) {
       <fieldset className={`Network-line Network-line--${line}`}>
         <legend>{networkData.lines[line]}</legend>
         <input type="hidden" name="line" value={line} />
-        <select name="station" ref={stationRef}>
-          {options}
-        </select>
+        <select name="station">{options}</select>
         <button type="submit" title="View train times">
           Go
         </button>
