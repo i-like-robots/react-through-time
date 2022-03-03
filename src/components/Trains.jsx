@@ -3,9 +3,8 @@ import React from "react";
 function formatTimeToStation(timeTo) {
   const minutes = Math.round(timeTo / 60);
   const seconds = Math.round((timeTo - minutes * 60) / 30) * 30;
-  const padding = seconds < 10 ? "0" : "";
 
-  return `${minutes}:${padding}${seconds}`;
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds > 0 ? seconds : "0"}`;
 }
 
 function Trains(props) {
