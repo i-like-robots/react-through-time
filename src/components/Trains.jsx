@@ -3,9 +3,14 @@ var React = require("react");
 function formatTimeToStation(timeTo) {
   var minutes = Math.round(timeTo / 60);
   var seconds = Math.round((timeTo - minutes * 60) / 30) * 30;
-  var padding = seconds < 10 ? "0" : "";
 
-  return "" + minutes + ":" + padding + seconds;
+  return (
+    "" +
+    minutes +
+    ":" +
+    (seconds < 10 ? "0" : "") +
+    (seconds > 0 ? seconds : "0")
+  );
 }
 
 var Trains = React.createClass({
