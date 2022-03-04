@@ -52,7 +52,15 @@ var Predictions = React.createClass({
   },
 
   fetchData: function (line, station) {
-    this.setState({ status: "loading" });
+    // Only update when line/station changes or new predictions load otherwise the
+    // loading notice will be displayed when refreshing current predictions.
+    var currentLine =
+      this.state.predictionData && this.state.predictionData.request.line;
+    var currentStation =
+      this.state.predictionData && this.state.predictionData.request.station;
+    var showLoading = line !== currentLine || station !== currentStation;
+
+    this.setState({ status: showLoading ? "loading" : "success" });
 
     var url = "/api/" + line + "/" + station;
 
@@ -89,12 +97,6 @@ var Predictions = React.createClass({
   componentWillReceiveProps: function (newProps) {
     this.fetchData(newProps.line, newProps.station);
     this.resetPoll(newProps.line, newProps.station);
-  },
-
-  shouldComponentUpdate: function (newProps, newState) {
-    // Only update when line/station changes or new predictions load otherwise the
-    // loading notice will be displayed when refreshing current predictions.
-    return newState.status !== "loading" || this.props !== newProps;
   },
 
   render: function () {
