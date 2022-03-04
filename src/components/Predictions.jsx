@@ -41,7 +41,6 @@ function Predictions(props) {
 
   const fetchData = useCallback(
     async (line, station) => {
-      // Logic moved from shouldComponentUpdate()
       // Only update when line/station changes or new predictions load otherwise the
       // loading notice will be displayed when refreshing current predictions.
       const showLoading =
