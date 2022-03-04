@@ -91,6 +91,7 @@ function Predictions(props) {
     // Replaces componentWillUnmount()
     return function cleanup() {
       clearInterval(pollRef.current);
+      isMountedRef.current = false;
     };
   }, []);
 
