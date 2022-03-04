@@ -19,7 +19,7 @@ function Departures(props) {
       {trains.length ? (
         trains
       ) : (
-        <p class="Departures-noData">No train arrivals due.</p>
+        <p className="Departures-noData">No train arrivals due.</p>
       )}
     </div>
   );

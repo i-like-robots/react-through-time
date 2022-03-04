@@ -41,7 +41,15 @@ class Predictions extends React.Component {
   }
 
   fetchData(line, station) {
-    this.setState({ status: "loading" });
+    // Only update when line/station changes or new predictions load otherwise the
+    // loading notice will be displayed when refreshing current predictions.
+    const currentLine =
+      this.state.predictionData && this.state.predictionData.request.line;
+    const currentStation =
+      this.state.predictionData && this.state.predictionData.request.station;
+    const showLoading = line !== currentLine || station !== currentStation;
+
+    this.setState({ status: showLoading ? "loading" : "success" });
 
     const url = `/api/${line}/${station}`;
 
@@ -72,12 +80,6 @@ class Predictions extends React.Component {
   componentWillReceiveProps(newProps) {
     this.fetchData(newProps.line, newProps.station);
     this.resetPoll(newProps.line, newProps.station);
-  }
-
-  shouldComponentUpdate(newProps, newState) {
-    // Only update when line/station changes or new predictions load otherwise the
-    // loading notice will be displayed when refreshing current predictions.
-    return newState.status !== "loading" || this.props !== newProps;
   }
 
   render() {
