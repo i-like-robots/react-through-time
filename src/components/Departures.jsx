@@ -23,7 +23,7 @@ var Departures = React.createClass({
         {trains.length ? (
           trains
         ) : (
-          <p class="Departures-noData">No train arrivals due.</p>
+          <p className="Departures-noData">No train arrivals due.</p>
         )}
       </div>
     );
