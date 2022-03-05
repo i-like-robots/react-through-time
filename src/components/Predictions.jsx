@@ -15,91 +15,73 @@ async function fetchRequest(url) {
 }
 
 function Predictions(props) {
-  const [state, setState] = useState({
-    status: props.initialData ? "success" : "welcome",
-    predictionData: props.initialData,
-  });
+  const [status, setStatus] = useState(
+    props.initialData ? "success" : "welcome"
+  );
+
+  const [predictionData, setPredictionData] = useState(props.initialData);
 
   const pollRef = useRef(null);
-  const isMountedRef = useRef(false);
 
   const onFetchError = useCallback((err) => {
-    setState({
-      status: "error",
-      predictionData: undefined,
-    });
-
+    setStatus("error");
     console.error(err);
   }, []);
 
   const onFetchSuccess = useCallback((data) => {
-    setState({
-      status: "success",
-      predictionData: data,
-    });
+    setStatus("success");
+    setPredictionData(data);
   }, []);
 
-  const fetchData = useCallback(
-    async (line, station) => {
-      // Only update when line/station changes or new predictions load otherwise the
-      // loading notice will be displayed when refreshing current predictions.
-      const showLoading =
-        line !== state.predictionData?.request.line ||
-        station !== state.predictionData?.request.station;
+  const fetchData = useCallback(async (line, station, showLoading) => {
+    setStatus(showLoading ? "loading" : "success");
 
-      setState({
-        ...state,
-        status: showLoading ? "loading" : "success",
-      });
+    const url = `/api/${line}/${station}`;
 
-      const url = `/api/${line}/${station}`;
-
-      try {
-        const data = await fetchRequest(url);
-        onFetchSuccess(data);
-      } catch (err) {
-        onFetchError(err);
-      }
-    },
-    [onFetchSuccess, onFetchError, state.predictionData]
-  );
+    try {
+      const data = await fetchRequest(url);
+      onFetchSuccess(data);
+    } catch (err) {
+      onFetchError(err);
+    }
+  }, []);
 
   const resetPoll = useCallback(
     (line, station) => {
       clearInterval(pollRef.current);
       pollRef.current = setInterval(() => fetchData(line, station), 1000 * 30);
     },
-    [pollRef]
+    [fetchData]
   );
 
   // Replaces componentWillReceiveProps()
+  // Replaces componentDidMount()
+  const fetchNewData =
+    props.line !== predictionData?.request.line ||
+    props.station !== predictionData?.request.station;
+
   useEffect(() => {
-    if (isMountedRef.current && props.line && props.station) {
-      fetchData(props.line, props.station);
+    if (props.line && props.station) {
+      if (fetchNewData) {
+        fetchData(props.line, props.station, true);
+      }
+
       resetPoll(props.line, props.station);
     }
-  }, [props.line, props.station]);
+  }, [fetchData, resetPoll, props.line, props.station, fetchNewData]);
 
-  // Replaces componentDidMount()
   useEffect(() => {
-    isMountedRef.current = true;
-
-    if (props.line && props.station) {
-      fetchData(props.line, props.station);
-    }
-
     // Replaces componentWillUnmount()
-    return function cleanup() {
+    return function () {
       clearInterval(pollRef.current);
-      isMountedRef.current = false;
     };
   }, []);
 
-  if (state.status === "success") {
-    return <Departures predictionData={state.predictionData} />;
+  if (status === "success") {
+    return <Departures predictionData={predictionData} />;
   }
 
-  return <Notice type={state.status} />;
+  return <Notice type={status} />;
 }
 
 export default Predictions;
