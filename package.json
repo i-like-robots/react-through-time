@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "node src/server/start.js",
-    "build": "esbuild --bundle --minify --target=es6 '--define:process.env.NODE_ENV=\"development\"' --outfile=public/bundle.js src/browser/bootstrap.js"
+    "build": "esbuild --bundle --minify --target=es2018 '--define:process.env.NODE_ENV=\"development\"' --outfile=public/bundle.js src/browser/bootstrap.js"
   },
   "dependencies": {
     "esbuild": "~0.8.0",
