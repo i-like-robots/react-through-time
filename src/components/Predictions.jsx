@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Notice from "./Notice.jsx";
 import Departures from "./Departures.jsx";
 
@@ -23,57 +23,65 @@ function Predictions(props) {
 
   const pollRef = useRef(null);
 
-  const onFetchError = useCallback((err) => {
-    setStatus("error");
-    console.error(err);
+  const { fetchData, resetPoll } = useMemo(() => {
+    const onFetchError = (err) => {
+      setStatus("error");
+      setPredictionData(undefined);
+
+      console.error(err);
+    };
+
+    const onFetchSuccess = (data) => {
+      setPredictionData(data);
+      setStatus("success");
+
+      resetPoll(data.request.line, data.request.station);
+    };
+
+    const fetchData = async (line, station, showLoading) => {
+      setStatus(showLoading ? "loading" : "success");
+
+      const url = `/api/${line}/${station}`;
+
+      try {
+        const data = await fetchRequest(url);
+        onFetchSuccess(data);
+      } catch (err) {
+        onFetchError(err);
+      }
+    };
+
+    const resetPoll = (line, station) => {
+      pollRef.current = setTimeout(
+        () => fetchData(line, station, false),
+        1000 * 30
+      );
+    };
+
+    return { fetchData, resetPoll };
   }, []);
-
-  const onFetchSuccess = useCallback((data) => {
-    setStatus("success");
-    setPredictionData(data);
-  }, []);
-
-  const fetchData = useCallback(async (line, station, showLoading) => {
-    setStatus(showLoading ? "loading" : "success");
-
-    const url = `/api/${line}/${station}`;
-
-    try {
-      const data = await fetchRequest(url);
-      onFetchSuccess(data);
-    } catch (err) {
-      onFetchError(err);
-    }
-  }, []);
-
-  const resetPoll = useCallback(
-    (line, station) => {
-      clearInterval(pollRef.current);
-      pollRef.current = setInterval(() => fetchData(line, station), 1000 * 30);
-    },
-    [fetchData]
-  );
 
   // Replaces componentWillReceiveProps()
-  // Replaces componentDidMount()
-  const fetchNewData =
-    props.line !== predictionData?.request.line ||
-    props.station !== predictionData?.request.station;
+  useEffect(() => {
+    const fetchNewData =
+      props.line !== predictionData?.request.line ||
+      props.station !== predictionData?.request.station;
 
+    if (props.line && props.station && fetchNewData) {
+      clearTimeout(pollRef.current);
+      fetchData(props.line, props.station, true);
+    }
+  }, [fetchData, predictionData, props.line, props.station]);
+
+  // Replaces componentDidMount()
   useEffect(() => {
     if (props.line && props.station) {
-      if (fetchNewData) {
-        fetchData(props.line, props.station, true);
-      }
-
       resetPoll(props.line, props.station);
     }
-  }, [fetchData, resetPoll, props.line, props.station, fetchNewData]);
 
-  useEffect(() => {
     // Replaces componentWillUnmount()
-    return function () {
-      clearInterval(pollRef.current);
+    return () => {
+      clearTimeout(pollRef.current);
     };
   }, []);
 
