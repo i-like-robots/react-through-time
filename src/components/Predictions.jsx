@@ -49,18 +49,12 @@ var Predictions = React.createClass({
       status: "success",
       predictionData: data,
     });
+
+    this.resetPoll(data.request.line, data.request.station);
   },
 
-  fetchData: function (line, station) {
-    // Only update when line/station changes or new predictions load otherwise the
-    // loading notice will be displayed when refreshing current predictions.
-    var currentLine =
-      this.state.predictionData && this.state.predictionData.request.line;
-    var currentStation =
-      this.state.predictionData && this.state.predictionData.request.station;
-    var showLoading = line !== currentLine || station !== currentStation;
-
-    this.setState({ status: showLoading ? "loading" : "success" });
+  fetchData: function (line, station, showLoadingState) {
+    this.setState({ status: showLoadingState ? "loading" : "success" });
 
     var url = "/api/" + line + "/" + station;
 
@@ -76,10 +70,8 @@ var Predictions = React.createClass({
   },
 
   resetPoll: function (line, station) {
-    clearInterval(this.poll);
-
-    this.poll = setInterval(
-      this.fetchData.bind(this, line, station),
+    this.poll = setTimeout(
+      this.fetchData.bind(this, line, station, false),
       1000 * 30
     );
   },
@@ -90,13 +82,24 @@ var Predictions = React.createClass({
     }
   },
 
-  componentWillUnmount: function () {
-    clearInterval(this.poll);
+  componentWillReceiveProps: function (newProps) {
+    // Only update when line/station changes or new predictions load otherwise the
+    // loading notice will be displayed when refreshing current predictions.
+    var currentLine =
+      this.state.predictionData && this.state.predictionData.request.line;
+    var currentStation =
+      this.state.predictionData && this.state.predictionData.request.station;
+    var fetchNewData =
+      newProps.line !== currentLine || newProps.station !== currentStation;
+
+    if (fetchNewData) {
+      clearTimeout(this.poll);
+      this.fetchData(newProps.line, newProps.station, true);
+    }
   },
 
-  componentWillReceiveProps: function (newProps) {
-    this.fetchData(newProps.line, newProps.station);
-    this.resetPoll(newProps.line, newProps.station);
+  componentWillUnmount: function () {
+    clearTimeout(this.poll);
   },
 
   render: function () {
