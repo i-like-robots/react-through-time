@@ -20,8 +20,10 @@ function TubeTracker(props) {
 
   // Replaces componentDidUpdate()
   useEffect(() => {
-    const queryString = new URLSearchParams(state).toString();
-    window.history.pushState(null, null, `?${queryString}`);
+    if (state.line && state.station) {
+      const queryString = new URLSearchParams(state).toString();
+      window.history.pushState(null, null, `?${queryString}`);
+    }
   }, [state.line, state.station]);
 
   // Replaces componentDidMount()
