@@ -38,18 +38,12 @@ class Predictions extends React.Component {
       status: "success",
       predictionData: data,
     });
+
+    this.resetPoll(this.props.line, this.props.station);
   }
 
-  fetchData(line, station) {
-    // Only update when line/station changes or new predictions load otherwise the
-    // loading notice will be displayed when refreshing current predictions.
-    const currentLine =
-      this.state.predictionData && this.state.predictionData.request.line;
-    const currentStation =
-      this.state.predictionData && this.state.predictionData.request.station;
-    const showLoading = line !== currentLine || station !== currentStation;
-
-    this.setState({ status: showLoading ? "loading" : "success" });
+  fetchData(line, station, showLoadingState) {
+    this.setState({ status: showLoadingState ? "loading" : "success" });
 
     const url = `/api/${line}/${station}`;
 
@@ -59,10 +53,8 @@ class Predictions extends React.Component {
   }
 
   resetPoll(line, station) {
-    clearInterval(this.poll);
-
-    this.poll = setInterval(
-      this.fetchData.bind(this, line, station),
+    this.poll = setTimeout(
+      this.fetchData.bind(this, line, station, false),
       1000 * 30
     );
   }
@@ -73,13 +65,24 @@ class Predictions extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    clearInterval(this.poll);
+  componentWillReceiveProps(newProps) {
+    // Only update when line/station changes or new predictions load otherwise the
+    // loading notice will be displayed when refreshing current predictions.
+    const currentLine =
+      this.state.predictionData && this.state.predictionData.request.line;
+    const currentStation =
+      this.state.predictionData && this.state.predictionData.request.station;
+    const fetchNewData =
+      newProps.line !== currentLine || newProps.station !== currentStation;
+
+    if (fetchNewData) {
+      clearTimeout(this.poll);
+      this.fetchData(newProps.line, newProps.station, true);
+    }
   }
 
-  componentWillReceiveProps(newProps) {
-    this.fetchData(newProps.line, newProps.station);
-    this.resetPoll(newProps.line, newProps.station);
+  componentWillUnmount() {
+    clearInterval(this.poll);
   }
 
   render() {
