@@ -8,5 +8,22 @@
     "type": "git",
     "url": "git+https://github.com/i-like-robots/react-through-time.git"
   },
-  "homepage": "https://github.com/i-like-robots/react-through-time"
+  "homepage": "https://github.com/i-like-robots/react-through-time",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node src/server/start.js",
+    "build": "browserify -e src/browser/bootstrap.js -t reactify -g uglifyify -o public/bundle.js --debug"
+  },
+  "dependencies": {
+    "express": "~4.5.0",
+    "react": "~0.12.2",
+    "node-jsx": "~0.12.2"
+  },
+  "devDependencies": {
+    "browserify": "^10.0.0",
+    "reactify": "^1.1.0",
+    "uglifyify": "^3.0.4"
+  }
 }
