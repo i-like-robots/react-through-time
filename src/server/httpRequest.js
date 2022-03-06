@@ -1,6 +1,6 @@
-const https = require("https");
+import https from "https";
 
-function httpRequest(opts) {
+export default function httpRequest(opts) {
   return new Promise((resolve, reject) => {
     const request = https.request(opts, (res) => {
       let data = "";
@@ -22,5 +22,3 @@ function httpRequest(opts) {
     request.end();
   });
 }
-
-module.exports = httpRequest;

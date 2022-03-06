@@ -4,10 +4,10 @@ import Trains from "./Trains.jsx";
 function Departures(props) {
   const { station, platforms } = props.predictionData;
 
-  const trains = Object.keys(platforms).map((platform) => (
+  const trains = Object.entries(platforms).map(([platform, trains]) => (
     <div className="Platform" key={platform}>
       <h2 className="Platform-heading">{platform}</h2>
-      <Trains trains={platforms[platform]} />
+      <Trains trains={trains} />
     </div>
   ));
 

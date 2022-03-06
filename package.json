@@ -10,22 +10,17 @@
   },
   "homepage": "https://github.com/i-like-robots/react-through-time",
   "engines": {
-    "node": "^6.7.0"
+    "node": "^14.5.0"
   },
   "scripts": {
     "start": "node src/server/start.js",
-    "build": "webpack --config webpack.config.js"
+    "build": "esbuild --bundle --minify --target=es2018 '--define:process.env.NODE_ENV=\"development\"' --outfile=public/bundle.js src/browser/bootstrap.js"
   },
   "dependencies": {
-    "babel-preset-env": "~1.1.0",
-    "babel-preset-react": "~6.16.0",
-    "babel-register": "~6.16.0",
-    "express": "~4.14.0",
-    "react": "~15.4.0",
-    "react-dom": "~15.4.0"
-  },
-  "devDependencies": {
-    "babel-loader": "^6.2.6",
-    "webpack": "^2.1.0"
+    "esbuild": "~0.8.0",
+    "esbuild-register": "~2.0.0",
+    "express": "~4.17.0",
+    "react": "~17.0.0",
+    "react-dom": "~17.0.0"
   }
 }

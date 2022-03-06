@@ -1,97 +1,101 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Notice from "./Notice.jsx";
 import Departures from "./Departures.jsx";
 
-function fetchRequest(url) {
-  return fetch(url).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      throw new Error(
-        `Unexpected response code: ${res.status}, ${res.statusText}`
-      );
-    }
-  });
-}
+async function fetchRequest(url) {
+  const res = await fetch(url);
 
-class Predictions extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      status: props.initialData ? "success" : "welcome",
-      predictionData: props.initialData,
-    };
-  }
-
-  onFetchError(err) {
-    this.setState({
-      status: "error",
-      predictionData: undefined,
-    });
-
-    console.error(err);
-  }
-
-  onFetchSuccess(data) {
-    this.setState({
-      status: "success",
-      predictionData: data,
-    });
-
-    this.resetPoll(this.props.line, this.props.station);
-  }
-
-  fetchData(line, station, showLoadingState) {
-    this.setState({ status: showLoadingState ? "loading" : "success" });
-
-    const url = `/api/${line}/${station}`;
-
-    fetchRequest(url)
-      .then((data) => this.onFetchSuccess(data))
-      .catch((err) => this.onFetchError(err));
-  }
-
-  resetPoll(line, station) {
-    this.poll = setTimeout(
-      this.fetchData.bind(this, line, station, false),
-      1000 * 30
+  if (res.ok) {
+    return res.json();
+  } else {
+    throw new Error(
+      `Unexpected response code: ${res.status}, ${res.statusText}`
     );
   }
+}
 
-  componentWillReceiveProps(newProps) {
-    // Only update when line/station changes or new predictions load otherwise the
-    // loading notice will be displayed when refreshing current predictions.
-    const currentLine =
-      this.state.predictionData && this.state.predictionData.request.line;
-    const currentStation =
-      this.state.predictionData && this.state.predictionData.request.station;
+function Predictions(props) {
+  const [status, setStatus] = useState(
+    props.initialData ? "success" : "welcome"
+  );
+
+  const [predictionData, setPredictionData] = useState(props.initialData);
+
+  const pollRef = useRef(null);
+
+  const { fetchData, resetPoll } = useMemo(() => {
+    const onFetchError = (err) => {
+      setStatus("error");
+      setPredictionData(undefined);
+
+      console.error(err);
+    };
+
+    const onFetchSuccess = (data) => {
+      setPredictionData(data);
+      setStatus("success");
+
+      resetPoll(data.request.line, data.request.station);
+    };
+
+    const fetchData = async (line, station, showLoading) => {
+      setStatus(showLoading ? "loading" : "success");
+
+      const url = `/api/${line}/${station}`;
+
+      try {
+        const data = await fetchRequest(url);
+        onFetchSuccess(data);
+      } catch (err) {
+        onFetchError(err);
+      }
+    };
+
+    const resetPoll = (line, station) => {
+      pollRef.current = setTimeout(
+        () => fetchData(line, station, false),
+        1000 * 30
+      );
+    };
+
+    return { fetchData, resetPoll };
+  }, []);
+
+  // Replaces componentWillReceiveProps()
+  useEffect(() => {
     const fetchNewData =
-      newProps.line !== currentLine || newProps.station !== currentStation;
+      props.line !== predictionData?.request.line ||
+      props.station !== predictionData?.request.station;
 
-    if (fetchNewData) {
-      clearTimeout(this.poll);
-      this.fetchData(newProps.line, newProps.station, true);
+    if (props.line && props.station && fetchNewData) {
+      clearTimeout(pollRef.current);
+      fetchData(props.line, props.station, true);
     }
-  }
+  }, [
+    fetchData,
+    predictionData?.request.line,
+    predictionData?.request.station,
+    props.line,
+    props.station,
+  ]);
 
-  componentDidMount() {
-    if (this.props.line && this.props.station) {
-      this.resetPoll(this.props.line, this.props.station);
-    }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.poll);
-  }
-
-  render() {
-    if (this.state.status === "success") {
-      return <Departures predictionData={this.state.predictionData} />;
+  // Replaces componentDidMount()
+  useEffect(() => {
+    if (props.line && props.station) {
+      resetPoll(props.line, props.station);
     }
 
-    return <Notice type={this.state.status} />;
+    // Replaces componentWillUnmount()
+    return () => {
+      clearTimeout(pollRef.current);
+    };
+  }, []);
+
+  if (status === "success") {
+    return <Departures predictionData={predictionData} />;
   }
+
+  return <Notice type={status} />;
 }
 
 export default Predictions;

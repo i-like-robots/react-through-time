@@ -1,40 +1,35 @@
-const express = require("express");
-const api = require("./api");
-const bootstrap = require("./bootstrap");
+import express from "express";
+import api from "./api.js";
+import bootstrap from "./bootstrap.js";
 
-const app = express();
+export const app = express();
 
-app.get("/api/:line/:station", (req, res) => {
-  api
-    .getData(req.params.line, req.params.station)
-    .then((data) => {
-      res.set("Cache-Control", "max-age=30, must-revalidate");
-      return res.json(data);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(err.code != null ? err.code : 50).send("Internal error");
-    });
+app.get("/api/:line/:station", async (req, res) => {
+  try {
+    const data = await api.getData(req.params.line, req.params.station);
+
+    res.set("Cache-Control", "max-age=30, must-revalidate");
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(err.code ?? 500).send("Internal error");
+  }
 });
 
-app.get("/", (req, res) => {
-  let fetchData;
+app.get("/", async (req, res) => {
+  try {
+    let data;
 
-  if (req.query.line && req.query.station) {
-    fetchData = api.getData(req.query.line, req.query.station);
+    if (req.query.line && req.query.station) {
+      data = await api.getData(req.query.line, req.query.station);
+    }
+
+    const html = bootstrap(data);
+    res.send(html);
+  } catch (err) {
+    console.error(err);
+    res.status(err.code ?? 500).send("Internal error");
   }
-
-  Promise.resolve(fetchData)
-    .then((data) => {
-      const html = bootstrap(data);
-      res.send(html);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(err.code != null ? err.code : 50).send("Internal error");
-    });
 });
 
 app.use("/public", express.static("./public"));
-
-module.exports = app;
