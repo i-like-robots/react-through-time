@@ -59,12 +59,6 @@ class Predictions extends React.Component {
     );
   }
 
-  componentDidMount() {
-    if (this.props.line && this.props.station) {
-      this.resetPoll(this.props.line, this.props.station);
-    }
-  }
-
   componentWillReceiveProps(newProps) {
     // Only update when line/station changes or new predictions load otherwise the
     // loading notice will be displayed when refreshing current predictions.
@@ -78,6 +72,12 @@ class Predictions extends React.Component {
     if (fetchNewData) {
       clearTimeout(this.poll);
       this.fetchData(newProps.line, newProps.station, true);
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.line && this.props.station) {
+      this.resetPoll(this.props.line, this.props.station);
     }
   }
 
