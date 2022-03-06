@@ -1,74 +1,68 @@
-var querystring = require("querystring");
-var networkUtils = require("./networkUtils");
-var httpRequest = require("./httpRequest");
-var networkData = require("../data");
+const querystring = require("querystring");
+const networkUtils = require("./networkUtils");
+const httpRequest = require("./httpRequest");
+const networkData = require("../data");
 
 function formatData(line, station, data) {
-  var platforms = {};
+  const platforms = {};
 
-  data.sort(function (a, b) {
-    return a.timeToStation - b.timeToStation;
-  });
+  data.sort((a, b) => a.timeToStation - b.timeToStation);
 
-  data.forEach(function (item) {
+  data.forEach((item) => {
     platforms[item.platformName] = platforms[item.platformName] || [];
     platforms[item.platformName].push(item);
   });
 
   return {
     request: {
-      line: line,
-      station: station,
+      line,
+      station,
     },
     station: {
       lineName: networkData.lines[line],
       stationName: networkData.stations[station],
     },
-    platforms: platforms,
+    platforms,
   };
 }
 
-function getData(line, station, callback) {
+function getData(line, station) {
   if (!networkUtils.isStationOnLine(line, station, networkData)) {
-    var error = new Error();
+    const error = new Error();
 
     error.message = "Invalid station and/or line combination";
     error.code = 400;
 
-    return callback(error, null);
+    return Promise.reject(error);
   }
 
-  var combinedLines = networkUtils.getCombinedLines(line, station, networkData);
+  const combinedLines = networkUtils.getCombinedLines(
+    line,
+    station,
+    networkData
+  );
 
-  var path = "/Line/" + combinedLines + "/Arrivals";
+  const path = `/Line/${combinedLines}/Arrivals`;
 
-  var query = {
+  const query = {
     app_id: process.env.APP_ID,
     app_key: process.env.APP_KEY,
     stopPointId: station,
   };
 
-  var opts = {
-    path: path + "?" + querystring.stringify(query),
+  const opts = {
+    path: `${path}?${querystring.stringify(query)}`,
     hostname: "api.tfl.gov.uk",
   };
 
-  httpRequest(opts, function (err, data) {
-    if (err) {
-      return callback(err, null);
-    }
+  return httpRequest(opts).then((data) => {
+    const json = JSON.parse(data);
+    const formattedData = formatData(line, station, json);
 
-    try {
-      var json = JSON.parse(data);
-      var formattedData = formatData(line, station, json);
-
-      callback(null, formattedData);
-    } catch (err) {
-      return callback(err, null);
-    }
+    return formattedData;
   });
 }
 
 module.exports = {
-  getData: getData,
+  getData,
 };

@@ -1,40 +1,46 @@
-var React = require("react");
+import React from "react";
 
-var NetworkLine = React.createClass({
-  handleSubmit: function (e) {
+class NetworkLine extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e) {
     e.preventDefault();
 
     // Dispatch an event for other components to capture
-    var updateEvent = new CustomEvent("station-select", {
+    const updateEvent = new CustomEvent("station-select", {
       detail: {
-        station: this.refs.station.getDOMNode().value,
+        station: this.station.value,
         line: this.props.line,
       },
       bubbles: true,
     });
 
-    this.refs.form.getDOMNode().dispatchEvent(updateEvent);
-  },
+    this.form.dispatchEvent(updateEvent);
+  }
 
-  render: function () {
-    var line = this.props.line;
-    var networkData = this.props.networkData;
-    var stationsOnLine = networkData.stationsOnLines[line];
+  render() {
+    const { line, networkData } = this.props;
+    const stationsOnLine = networkData.stationsOnLines[line];
 
-    var options = stationsOnLine.map(function (stationCode) {
-      return (
-        <option value={stationCode} key={stationCode}>
-          {networkData.stations[stationCode]}
-        </option>
-      );
-    });
+    const options = stationsOnLine.map((stationCode) => (
+      <option value={stationCode} key={stationCode}>
+        {networkData.stations[stationCode]}
+      </option>
+    ));
 
     return (
-      <form ref="form" method="GET" onSubmit={this.handleSubmit}>
-        <fieldset className={"Network-line Network-line--" + line}>
+      <form
+        ref={(c) => (this.form = c)}
+        method="GET"
+        onSubmit={this.handleSubmit}
+      >
+        <fieldset className={`Network-line Network-line--${line}`}>
           <legend>{networkData.lines[line]}</legend>
           <input type="hidden" name="line" value={line} />
-          <select name="station" ref="station">
+          <select name="station" ref={(c) => (this.station = c)}>
             {options}
           </select>
           <button type="submit" title="View train times">
@@ -43,7 +49,7 @@ var NetworkLine = React.createClass({
         </fieldset>
       </form>
     );
-  },
-});
+  }
+}
 
-module.exports = NetworkLine;
+export default NetworkLine;

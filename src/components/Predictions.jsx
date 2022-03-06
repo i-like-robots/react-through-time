@@ -1,114 +1,97 @@
-var React = require("react");
-var Notice = require("./Notice.jsx");
-var Departures = require("./Departures.jsx");
+import React from "react";
+import Notice from "./Notice.jsx";
+import Departures from "./Departures.jsx";
 
-function ajaxRequest(url, callback) {
-  var request = new XMLHttpRequest();
-
-  request.open("GET", url);
-
-  request.onload = function () {
-    if (this.status === 200) {
-      try {
-        var json = JSON.parse(this.responseText);
-        callback(null, json);
-      } catch (err) {
-        callback(err, null);
-      }
+function fetchRequest(url) {
+  return fetch(url).then((res) => {
+    if (res.ok) {
+      return res.json();
     } else {
-      callback(new Error(this.status), null);
+      throw new Error(
+        `Unexpected response code: ${res.status}, ${res.statusText}`
+      );
     }
-  };
-
-  request.onerror = function (err) {
-    callback(err, null);
-  };
-
-  request.send();
+  });
 }
 
-var Predictions = React.createClass({
-  getInitialState: function () {
-    return {
-      status: this.props.initialData ? "success" : "welcome",
-      predictionData: this.props.initialData,
-    };
-  },
+class Predictions extends React.Component {
+  constructor(props) {
+    super(props);
 
-  onFetchError: function (err) {
+    this.state = {
+      status: props.initialData ? "success" : "welcome",
+      predictionData: props.initialData,
+    };
+  }
+
+  onFetchError(err) {
     this.setState({
       status: "error",
       predictionData: undefined,
     });
 
     console.error(err);
-  },
+  }
 
-  onFetchSuccess: function (data) {
+  onFetchSuccess(data) {
     this.setState({
       status: "success",
       predictionData: data,
     });
 
-    this.resetPoll(data.request.line, data.request.station);
-  },
+    this.resetPoll(this.props.line, this.props.station);
+  }
 
-  fetchData: function (line, station, showLoadingState) {
+  fetchData(line, station, showLoadingState) {
     this.setState({ status: showLoadingState ? "loading" : "success" });
 
-    var url = "/api/" + line + "/" + station;
+    const url = `/api/${line}/${station}`;
 
-    function callback(err, data) {
-      if (err) {
-        this.onFetchError(err);
-      } else {
-        this.onFetchSuccess(data);
-      }
-    }
+    fetchRequest(url)
+      .then((data) => this.onFetchSuccess(data))
+      .catch((err) => this.onFetchError(err));
+  }
 
-    ajaxRequest(url, callback.bind(this));
-  },
-
-  resetPoll: function (line, station) {
+  resetPoll(line, station) {
     this.poll = setTimeout(
       this.fetchData.bind(this, line, station, false),
       1000 * 30
     );
-  },
+  }
 
-  componentWillReceiveProps: function (newProps) {
+  componentWillReceiveProps(newProps) {
     // Only update when line/station changes or new predictions load otherwise the
     // loading notice will be displayed when refreshing current predictions.
-    var currentLine =
+    const currentLine =
       this.state.predictionData && this.state.predictionData.request.line;
-    var currentStation =
+    const currentStation =
       this.state.predictionData && this.state.predictionData.request.station;
-    var fetchNewData =
+    const fetchNewData =
       newProps.line !== currentLine || newProps.station !== currentStation;
 
     if (fetchNewData) {
       clearTimeout(this.poll);
       this.fetchData(newProps.line, newProps.station, true);
     }
-  },
+  }
 
-  componentDidMount: function () {
+  componentDidMount() {
     if (this.props.line && this.props.station) {
       this.resetPoll(this.props.line, this.props.station);
     }
-  },
+  }
 
-  componentWillUnmount: function () {
-    clearTimeout(this.poll);
-  },
+  componentWillUnmount() {
+    clearInterval(this.poll);
+  }
 
-  render: function () {
+  render() {
     if (this.state.status === "success") {
       return <Departures predictionData={this.state.predictionData} />;
     }
 
     return <Notice type={this.state.status} />;
-  },
-});
+  }
+}
 
-module.exports = Predictions;
+export default Predictions;

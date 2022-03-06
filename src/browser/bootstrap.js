@@ -1,9 +1,10 @@
-var React = require("react");
-var TubeTracker = require("../components/TubeTracker.jsx");
+import React from "react";
+import ReactDOM from "react-dom";
+import TubeTracker from "../components/TubeTracker.jsx";
 
-var data = JSON.parse(document.getElementById("initialData").innerHTML);
+const data = JSON.parse(document.getElementById("initialData").innerHTML);
 
-React.render(
+ReactDOM.render(
   React.createElement(TubeTracker, data),
   document.getElementById("app")
 );

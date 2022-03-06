@@ -1,24 +1,26 @@
-var https = require("https");
+const https = require("https");
 
-module.exports = function httpRequest(opts, callback) {
-  var request = https.request(opts, function (res) {
-    var data = "";
+function httpRequest(opts) {
+  return new Promise((resolve, reject) => {
+    const request = https.request(opts, (res) => {
+      let data = "";
 
-    res.setEncoding("utf8");
+      res.setEncoding("utf8");
 
-    res.on("data", function (chunk) {
-      data += chunk;
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      res.on("end", () => resolve(data));
     });
 
-    res.on("end", function () {
-      callback(null, data);
+    request.on("error", (err) => {
+      console.error(err);
+      reject(err);
     });
-  });
 
-  request.on("error", function (err) {
-    console.error(err);
-    callback(err, null);
+    request.end();
   });
+}
 
-  request.end();
-};
+module.exports = httpRequest;

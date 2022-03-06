@@ -1,17 +1,14 @@
-var React = require("react");
-var NetworkLine = require("./NetworkLine.jsx");
+import React from "react";
+import NetworkLine from "./NetworkLine.jsx";
 
-var Network = React.createClass({
-  render: function () {
-    var networkData = this.props.networkData;
-    var lineCodes = Object.keys(networkData.lines);
+function Network(props) {
+  const lineCodes = Object.keys(props.networkData.lines);
 
-    var lines = lineCodes.map(function (line) {
-      return <NetworkLine networkData={networkData} line={line} key={line} />;
-    });
+  const lines = lineCodes.map((line) => (
+    <NetworkLine networkData={props.networkData} line={line} key={line} />
+  ));
 
-    return <div className="Network">{lines}</div>;
-  },
-});
+  return <div className="Network">{lines}</div>;
+}
 
-module.exports = Network;
+export default Network;

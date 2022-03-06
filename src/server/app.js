@@ -1,37 +1,38 @@
-var express = require("express");
-var api = require("./api");
-var bootstrap = require("./bootstrap");
+const express = require("express");
+const api = require("./api");
+const bootstrap = require("./bootstrap");
 
-var app = express();
+const app = express();
 
-app.get("/api/:line/:station", function (req, res) {
-  res.set("Cache-Control", "max-age=30, must-revalidate");
-
-  api.getData(req.params.line, req.params.station, function (err, data) {
-    if (err) {
-      console.error(err);
-      res.status(err.code != null ? err.code : 500).send("Internal error");
-    } else {
+app.get("/api/:line/:station", (req, res) => {
+  api
+    .getData(req.params.line, req.params.station)
+    .then((data) => {
+      res.set("Cache-Control", "max-age=30, must-revalidate");
       return res.json(data);
-    }
-  });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(err.code != null ? err.code : 50).send("Internal error");
+    });
 });
 
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
+  let fetchData;
+
   if (req.query.line && req.query.station) {
-    api.getData(req.query.line, req.query.station, function (err, data) {
-      if (err) {
-        console.error(err);
-        res.status(err.code != null ? err.code : 500).send("Internal error");
-      } else {
-        var html = bootstrap(data);
-        res.send(html);
-      }
-    });
-  } else {
-    var html = bootstrap(null);
-    res.send(html);
+    fetchData = api.getData(req.query.line, req.query.station);
   }
+
+  Promise.resolve(fetchData)
+    .then((data) => {
+      const html = bootstrap(data);
+      res.send(html);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(err.code != null ? err.code : 50).send("Internal error");
+    });
 });
 
 app.use("/public", express.static("./public"));
