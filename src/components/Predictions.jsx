@@ -76,12 +76,6 @@ var Predictions = React.createClass({
     );
   },
 
-  componentDidMount: function () {
-    if (this.props.line && this.props.station) {
-      this.resetPoll(this.props.line, this.props.station);
-    }
-  },
-
   componentWillReceiveProps: function (newProps) {
     // Only update when line/station changes or new predictions load otherwise the
     // loading notice will be displayed when refreshing current predictions.
@@ -95,6 +89,12 @@ var Predictions = React.createClass({
     if (fetchNewData) {
       clearTimeout(this.poll);
       this.fetchData(newProps.line, newProps.station, true);
+    }
+  },
+
+  componentDidMount: function () {
+    if (this.props.line && this.props.station) {
+      this.resetPoll(this.props.line, this.props.station);
     }
   },
 
