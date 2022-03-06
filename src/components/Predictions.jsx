@@ -71,7 +71,13 @@ function Predictions(props) {
       clearTimeout(pollRef.current);
       fetchData(props.line, props.station, true);
     }
-  }, [fetchData, predictionData, props.line, props.station]);
+  }, [
+    fetchData,
+    predictionData?.request.line,
+    predictionData?.request.station,
+    props.line,
+    props.station,
+  ]);
 
   // Replaces componentDidMount()
   useEffect(() => {
